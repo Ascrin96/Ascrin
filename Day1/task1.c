@@ -8,7 +8,7 @@ int main(){
 
 	char str[10], word[10];
 	int fd[2];
-	size_t sizeW, sizeR;
+	size_t size;
 
 	if(pipe(fd) < 0){
 		printf("Can\'t create pipe\n");
@@ -25,12 +25,12 @@ int main(){
 			printf("Child process %d\n", getpid());
 			printf("Enter the word:\n");
 			scanf("%s", str);
-			sizeW = write(fd[1], str, strlen(str));
+			size = write(fd[1], str, strlen(str));
 	}
 		else{
 			int stat;
 			printf("parrent process %d\n", getpid());
-			sizeR = read(fd[0], word, 10);
+			size = read(fd[0], word, 10);
 			wait(&stat);
 			printf("The entered word: %s\n", word);
 			printf("parrent process %d finished %d\n", getpid(), stat);
