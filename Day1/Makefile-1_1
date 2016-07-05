@@ -1,0 +1,4 @@
+all: task1_1
+
+task1_1.o: task1_1.c 
+	gcc -o task1_1.c 
