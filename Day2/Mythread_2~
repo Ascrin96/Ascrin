@@ -1,0 +1,51 @@
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NUM_THREADS     5
+
+int k = 0;
+
+void *print_hello(void *num) {
+    long t_num;
+    int t_id;
+    int i;
+    t_num = (long) num;
+    t_id =  pthread_self();
+    for (i = 0; i < 10; i++) {
+        printf("Hello World! Thread num: %ld, id: %d\n", t_num, t_id);
+        sleep(1);
+    }
+    pthread_exit(NULL);
+}
+
+void func_add(int  k){
+	k = k + 5;
+}
+
+void fucn_sub(int k){
+	k = k -2;
+}
+
+int main (int argc, char *argv[]) {
+    pthread_t threads[2];
+    int rc;
+    long t;
+
+    for(t = 0; t < 2; t++) {
+        printf("In main: creating thread %ld\n", t);
+        rc = pthread_create(&threads[t], NULL, func_add, NULL);
+        if (rc) {
+            printf("ERROR; return code from pthread_create() is %d\n", rc);
+            exit(-1);
+        }
+    }
+    
+    printf("k = %d\n", k);
+//   for(t = 0; t < NUM_THREADS; t++) {
+//        pthread_join(threads[t], NULL);
+//        printf("Thread #%ld finished\n", t);
+//    }
+
+    return 0;
+}
