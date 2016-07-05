@@ -29,9 +29,9 @@ int main(){
 	}
 		else{
 			int stat;
+			wait(&stat);
 			printf("parrent process %d\n", getpid());
 			size = read(fd[0], word, 10);
-			wait(&stat);
 			printf("The entered word: %s\n", word);
 			printf("parrent process %d finished %d\n", getpid(), stat);
 		}

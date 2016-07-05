@@ -6,6 +6,9 @@
 int main(){
 
 	size_t size;
+	int fd[2];
+
+	char str[512];
 
 	if(pipe(fd) < 0){
 		printf("Can\'t create pipe\n");
@@ -20,23 +23,22 @@ int main(){
 	
 	else if(pid == 0){
 		printf("Child process %d\n", getpid());
-		size = write(fd[1], execlp("/bin/ls", "ls", "-l","/tmp/", NULL), );
+		close(fd[0]);
+		dup2(fd[1], 1);
+		dup2(fd[1], 2);
+		close(fd[1]);
+		execlp("/bin/ls", "ls", "-l","/tmp/", NULL);
+		exit(1);
 	}
 		else{
+			int stat;
+			printf("parrent process %d\n", getpid());
+			close(fd[1]);
+			wait(&stat);
+			size = read(fd[0],str,sizeof(str));
+			printf("My string:\n%s\n", str);
 			
 		}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
