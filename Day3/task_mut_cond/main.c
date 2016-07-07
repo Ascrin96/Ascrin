@@ -14,24 +14,24 @@ pthread_mutex_t mut2;
 pthread_cond_t cond;
 
 void *My_counter(){
-	count++;
 
 	pthread_mutex_lock(&mut1);
-	sleep(count);
+	count++;
 	status++;
 	pthread_mutex_unlock(&mut1);
+	sleep(count);
 
 	printf("Thread %d stopped\n", status);
 
-	pthread_mutex_lock(&mut1);
+	pthread_mutex_lock(&mut2);
 	if(status == NUM_THREADS){
 		pthread_cond_broadcast(&cond);
 	}
-	pthread_cond_wait( &cond, &mut1 );
+	pthread_cond_wait( &cond, &mut2 );
 	if(status == NUM_THREADS){
 		pthread_cond_broadcast(&cond);
 	}
-	pthread_mutex_unlock(&mut1);
+	pthread_mutex_unlock(&mut2);
 	printf("Threads free\n");
 }
 
