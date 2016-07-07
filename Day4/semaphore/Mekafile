@@ -1,0 +1,9 @@
+all: File1
+
+File1.o: File1.c bin_sem.c 
+	gcc -o File1.c bin_sem.c 
+
+bin_sem.c: 
+
+clean:
+	rm -rf *.o File1
