@@ -4,37 +4,47 @@
 
 #define NUM_THREADS     5
 
-int count;
+int count = 0;
+int status;
 
-pthread_mutex_t mut1 = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mut2 = PTHREAD_MUTEX_INITIALIZER;
 
-pthread_cond_t *cond;
-pthread_cond_init(cond, NULL);
+pthread_mutex_t mut1;
+pthread_mutex_t mut2;
 
-void* counter(void*){
+pthread_cond_t cond;
+
+void *My_counter(){
 	count++;
 
 	pthread_mutex_lock(&mut1);
 	sleep(count);
-	printf("Thread finished\n");
+	status++;
 	pthread_mutex_unlock(&mut1);
 
-	
-	pthread_mutex_lock(&mut2);
-	pthread_cond_wait(&cond, &mut2);
-	pthread_mutex_unlock(&mut2);
-	
+	printf("Thread %d stopped\n", status);
+
+	pthread_mutex_lock(&mut1);
+	if(status == NUM_THREADS){
+		pthread_cond_broadcast(&cond);
+	}
+	pthread_cond_wait( &cond, &mut1 );
+	if(status == NUM_THREADS){
+		pthread_cond_broadcast(&cond);
+	}
 	pthread_mutex_unlock(&mut1);
+	printf("Threads free\n");
 }
 
-int main () {
+int main (int argc, char *argv) {
+	pthread_mutex_init(&mut1, NULL);
+	pthread_mutex_init(&mut2, NULL);
+	pthread_cond_init(&cond, NULL);
 	pthread_t threads[NUM_THREADS];
 	int i, rc;
 
 	for(i = 0; i < NUM_THREADS; i++){
-		printf("In main: creating thread %d\n", t);
-	        rc = pthread_create(&threads[t], NULL, counter, NULL);
+		printf("In main: creating thread %d\n", i+1);
+	        rc = pthread_create(&threads[i], NULL, My_counter, NULL);
 	        if (rc) {
 	            printf("ERROR; return code from pthread_create() is %d\n", rc);
 	            exit(-1);
@@ -42,9 +52,9 @@ int main () {
 	
 	}
 	
-	for(t = 0; t < NUM_THREADS; t++) {
-        	pthread_join(threads[t], NULL);
-        	printf("Thread #%d finished\n", t);
+	for(i = 0; i < NUM_THREADS; i++) {
+        	pthread_join(threads[i], NULL);
+  	   	printf("Thread #%d finished\n", i+1);
 	}
 
 }

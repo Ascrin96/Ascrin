@@ -1,63 +1,31 @@
-#include <pthread.h>
 #include <stdio.h>
-#include <stdlib.h>
-
-#define NUM_THREADS     5
-
-int k = 0;
-
-/*void *print_hello(void *num) {
-    long t_num;
-    int t_id;
-    int i;
-    t_num = (long) num;
-    t_id =  pthread_self();
-    for (i = 0; i < 10; i++) {
-        printf("Hello World! Thread num: %ld, id: %d\n", t_num, t_id);
-        sleep(1);
-    }
-    pthread_exit(NULL);
-}*/
-
-void *func_add(){
+#include <pthread.h>
+	int k;
+void* add_func() {
 	int i;
-	for(i = 0; i < 10; i++){
+	for (i = 0; i < 10; i++) {
 		k++;
-		printf("%d\n", k);	
+		printf("[add_func] k = %d\n", k);
+		sleep(1);
 	}
 }
-
-void *fucn_sub(){
+void* sub_func() {
 	int i;
-	for(i = 0; i < 10; i++){
-		k--;
-		printf("%d\n", k);	
+	for (i = 0; i < 10; i++) {
+		k -= 1;
+		printf("[sub_func] k = %d\n", k);
+		sleep(1);
 	}
 }
 
-int main (int argc, char *argv[]) {
-    pthread_t threads[2];
-    int rc1, rc2;
-    long t;
+int main(int argc, char *argv) {
+	pthread_t t_id1, t_id2;
+	k = 0;
 
-        rc1 = pthread_create(&threads[t], NULL, func_add, NULL);
-        if (rc1) {
-            printf("ERROR; return code from pthread_create() is %d\n", rc1);
-            exit(-1);
-        }
-	
-	rc2 = pthread_create(&threads[t], NULL, func_sub, NULL);
-        if (rc2) {
-            printf("ERROR; return code from pthread_create() is %d\n", rc2);
-            exit(-1);
-        }
-    
-	pthread_join(threads[0], NULL);
-	pthread_join(threads[1], NULL);
-//   for(t = 0; t < NUM_THREADS; t++) {
-//        pthread_join(threads[t], NULL);
-//        printf("Thread #%ld finished\n", t);
-//    }
+	pthread_create(&t_id1, NULL, add_func, NULL);
+	pthread_create(&t_id2, NULL, sub_func, NULL);
+	pthread_join(t_id1, NULL);
+	pthread_join(t_id2, NULL);
 
-    return 0;
+	return 1;
 }
